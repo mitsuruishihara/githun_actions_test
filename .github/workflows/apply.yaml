@@ -10,16 +10,13 @@ on:
 jobs:
   apply:
     runs-on: ubuntu-latest
-    timeout-minutes: 15
-    if: github.event.pull_request.merged == true
+    needs: deploy
+    timeout-minutes: 5
     permissions:
       id-token: write
       contents: read
       pull-requests: write
-    defaults:
-      run:
-        shell: bash
-        working-directory: ./terraform
+      repository-projects: read
     steps:
       - name: git-pr-release dev to stg
         if: contains(github.base_ref, 'master')
