@@ -10,7 +10,6 @@ on:
 jobs:
   apply:
     runs-on: ubuntu-latest
-    needs: deploy
     timeout-minutes: 5
     permissions:
       id-token: write
