@@ -20,7 +20,7 @@ jobs:
       - name: git-pr-release dev to stg
         if: contains(github.base_ref, 'master')
         run: |
-          gh pr create -H "master" -B "stg" -t "元のPRと同じタイトル"
+          gh pr create -H "master" -B "stg" -t "元のPRと同じタイトル" --fill
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
