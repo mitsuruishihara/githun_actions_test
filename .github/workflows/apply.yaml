@@ -1,0 +1,30 @@
+name: Apply
+on:
+   pull_request:
+     branches:
+     - master
+     - stg
+     - main
+     types: [closed]     
+
+jobs:
+  apply:
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    if: github.event.pull_request.merged == true
+    permissions:
+      id-token: write
+      contents: read
+      pull-requests: write
+    defaults:
+      run:
+        shell: bash
+        working-directory: ./terraform
+    steps:
+      - name: git-pr-release dev to stg
+        if: contains(github.base_ref, 'master')
+        run: |
+          gh pr create -H "master" -B "stg" -t "元のPRと同じタイトル"
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
