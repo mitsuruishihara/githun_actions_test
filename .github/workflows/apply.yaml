@@ -1,4 +1,4 @@
-name: Apply
+name: CreatePR
 on:
    pull_request:
      branches:
@@ -21,11 +21,32 @@ jobs:
         uses: actions/checkout@v3
         with:
           fetch-depth: 0
+        # run: echo "BRANCH=$(echo ${GITHUB_REF#refs/heads/})" >> $GITHUB_ENV
+        env:
+          BRANCH: "${GITHUB_REF#refs/heads/}"
 
-      - name: git-pr-release dev to stg
-        if: contains(github.base_ref, 'master')
+      - name: Create new branch from master
         run: |
-          gh pr create -H "master" -B "stg" -t "元のPRと同じタイトル" --fill
+          # ↑でcheckoutしてたら派生元branch指定いらない
+          git checkout -b feature/${{ env.BRANCH }}-stg
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
+      - name: create pr feature-stg to stg
+        if: contains(github.base_ref, 'master')
+        run: |
+          gh pr create -H "feature/${{ env.BRANCH }}-stg" -B "stg" -t "元と同じタイトル" --fill
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
+
+
+
+# 1. [開発者] 機能1を開発・PRを作成 (feature/1ブランチを作成 -> PR1)
+# 2. [開発者] 機能2を開発・PRを作成 (feature/2ブランチを作成 -> PR2)
+# 3. [開発者] PR1のplanを確認して、問題なければfeature/1をマージ (apply)
+# 4. [CI] feature/1のマージをトリガーとして、feature/1-stgブランチとstg向けPR3を作成
+# 5. [開発者] PR2のplanを確認して、問題なければfeature/2をマージ (apply)
+# 6. [CI] feature/2のマージをトリガーとして、feature/2-stgブランチとstg向けPR4を作成
+
+# 
