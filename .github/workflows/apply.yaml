@@ -5,7 +5,7 @@ on:
      - master
      - stg
      - main
-     types: [closed]     
+     types: [closed]
 
 jobs:
   apply:
@@ -31,6 +31,7 @@ jobs:
           # ↑でcheckoutしてたら派生元branch指定いらない
           # git checkout -b feature/${{ env.BRANCH }}-stg
           git checkout -b feature/hoge-stg
+          git push origin feature/hoge-stg
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
