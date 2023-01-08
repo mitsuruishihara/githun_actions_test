@@ -5,22 +5,33 @@ on:
      - master
      - stg
      - main
-     types: [closed]     
+     types: [closed]
 
 jobs:
   apply:
     runs-on: ubuntu-latest
     timeout-minutes: 5
     permissions:
-      id-token: write
-      contents: read
+      # id-token: write
+      # contents: read
+      # pull-requests: write
+      # repository-projects: read
+      actions: write
+      checks: write
+      contents: write
+      deployments: write
+      issues: write
+      packages: write
       pull-requests: write
-      repository-projects: read
+      repository-projects: write
+      security-events: write
+      statuses: write
     steps:
       - name: Checkout
         uses: actions/checkout@v3
         with:
           fetch-depth: 0
+          ref: master
         # run: echo "BRANCH=$(echo ${GITHUB_REF#refs/heads/})" >> $GITHUB_ENV
         env:
           BRANCH: "${GITHUB_REF#refs/heads/}"
@@ -28,14 +39,16 @@ jobs:
       - name: Create new branch from master
         run: |
           # ↑でcheckoutしてたら派生元branch指定いらない
-          git checkout -b feature/${{ env.BRANCH }}-stg
+          # git checkout -b feature/${{ env.BRANCH }}-stg
+          git checkout -b feature/fuga-stg
+          git push origin feature/fuga-stg
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
       - name: create pr feature-stg to stg
         if: contains(github.base_ref, 'master')
         run: |
-          gh pr create -H "feature/${{ env.BRANCH }}-stg" -B "stg" -t "元と同じタイトル" --fill
+          gh pr create -H "feature/fuga-stg" -B "stg" -t "元と同じタイトル" --fill
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
