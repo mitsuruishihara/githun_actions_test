@@ -1,0 +1,42 @@
+name: Apply
+on:
+   pull_request:
+     branches:
+     - master
+     - stg
+     - main
+     types: [closed]     
+
+jobs:
+  apply:
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    permissions:
+      id-token: write
+      contents: read
+      pull-requests: write
+      repository-projects: read
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v3
+        with:
+          fetch-depth: 0
+      - name: git-pr-release dev to stg
+        if: contains(github.base_ref, 'master')
+        uses: bakunyo/git-pr-release-action@v1.4
+        env:
+          GITHUB_TOKEN: ${{ steps.generate_token.outputs.token }}
+          GIT_PR_RELEASE_BRANCH_PRODUCTION: stg
+          GIT_PR_RELEASE_BRANCH_STAGING: master
+          GIT_PR_RELEASE_LABELS: staging-release
+          GIT_PR_RELEASE_TEMPLATE: .git-pr-release-template
+
+      - name: git-pr-release stg to main
+        if: contains(github.base_ref, 'stg')
+        uses: bakunyo/git-pr-release-action@v1.4
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          GIT_PR_RELEASE_BRANCH_PRODUCTION: main
+          GIT_PR_RELEASE_BRANCH_STAGING: stg
+          GIT_PR_RELEASE_LABELS: prod-release
+          GIT_PR_RELEASE_TEMPLATE: .git-pr-release-template
