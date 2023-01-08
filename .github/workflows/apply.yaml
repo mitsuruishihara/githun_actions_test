@@ -39,9 +39,9 @@ jobs:
       - name: Create new branch from master
         run: |
           # ↑でcheckoutしてたら派生元branch指定いらない
-          # git checkout -b feature/${{ env.BRANCH }}-stg
-          git checkout -b feature/fuga-stg
-          git push origin feature/fuga-stg
+          # git checkout -b feature/fuga-stg
+          git checkout -b feature/${{ env.GITHUB_REF_NAME }}-stg
+          git push origin feature/${{ env.GITHUB_REF_NAME }}-stg
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
@@ -61,5 +61,3 @@ jobs:
 # 4. [CI] feature/1のマージをトリガーとして、feature/1-stgブランチとstg向けPR3を作成
 # 5. [開発者] PR2のplanを確認して、問題なければfeature/2をマージ (apply)
 # 6. [CI] feature/2のマージをトリガーとして、feature/2-stgブランチとstg向けPR4を作成
-
-# 
