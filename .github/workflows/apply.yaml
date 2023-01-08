@@ -40,15 +40,15 @@ jobs:
         run: |
           # ↑でcheckoutしてたら派生元branch指定いらない
           # git checkout -b feature/${{ env.BRANCH }}-stg
-          git checkout -b feature/hoge-stg
-          git push origin feature/hoge-stg
+          git checkout -b feature/fuga-stg
+          git push origin feature/fuga-stg
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
       - name: create pr feature-stg to stg
         if: contains(github.base_ref, 'master')
         run: |
-          gh pr create -H "feature/hoge-stg" -B "stg" -t "元と同じタイトル" --fill
+          gh pr create -H "feature/fuga-stg" -B "stg" -t "元と同じタイトル" --fill
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
