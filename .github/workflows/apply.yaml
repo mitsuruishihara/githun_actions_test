@@ -40,8 +40,9 @@ jobs:
         run: |
           # ↑でcheckoutしてたら派生元branch指定いらない
           # git checkout -b feature/fuga-stg
-          git checkout -b feature/${{ env.GITHUB_REF_NAME }}-stg
-          git push origin feature/${{ env.GITHUB_REF_NAME }}-stg
+          # git checkout -b feature/${{ env.GITHUB_REF_NAME }}-stg
+          # git push origin feature/${{ env.GITHUB_REF_NAME }}-stg
+          git checkout -b feature/${{ env.BRANCH }}
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
