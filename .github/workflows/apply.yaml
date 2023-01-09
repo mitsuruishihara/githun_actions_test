@@ -41,14 +41,17 @@ jobs:
         run: |
           git checkout -b ${{ env.HEAD_BRANCH }}-stg
           git push origin ${{ env.HEAD_BRANCH }}-stg
+          echo "HEAD_BRANCH_STG=${{ github.head_ref }}" >> $GITHUB_ENV
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-          HEAD_BRANCH_STG: ${{ github.head_ref }}
+          # HEAD_BRANCH_STG: ${{ github.head_ref }} feature/test-6になった
 
       - name: create pr feature-stg to stg
         if: contains(github.base_ref, 'master')
         run: |
+          #gh pr create -H "${{ env.HEAD_BRANCH_STG }}" -B "stg" -t "stg release ${{ env.HEAD_BRANCH }}" --fill ${{ env.HEAD_BRANCH_STG }}がからになる
           gh pr create -H "${{ env.HEAD_BRANCH_STG }}" -B "stg" -t "stg release ${{ env.HEAD_BRANCH }}" --fill
+        
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
