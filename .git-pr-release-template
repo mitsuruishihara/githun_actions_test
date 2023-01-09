@@ -1,0 +1,12 @@
+Release <%= Time.now %>
+
+## Note
+- Code owners are automatically assigned to reviewers, but reviews are not required.
+  - If you are worried, feel free to contact code owners.
+- Please make sure that the checklists below are all checked.
+  - If it is not checked, ask the PR author to confirm the release.
+
+## PRs
+<% pull_requests.each do |pr| -%>
+<%= pr.to_checklist_item %>
+<% end -%>
