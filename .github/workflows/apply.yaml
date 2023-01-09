@@ -28,21 +28,24 @@ jobs:
       statuses: write
     steps:
       - name: branch name
+        if: contains(github.base_ref, 'master')
         run: | 
           echo "HEAD_BRANCH=${{ github.head_ref }}" >> $GITHUB_ENV
 
       - name: Checkout
+        if: contains(github.base_ref, 'master')
         uses: actions/checkout@v3
         with:
           fetch-depth: 0
           ref: master
 
       - name: Create new branch from master
+        if: contains(github.base_ref, 'master')
         run: |
           git checkout -b ${{ env.HEAD_BRANCH }}-stg
           echo "HEAD_BRANCH_STG=$(git rev-parse --abbrev-ref HEAD)" >> $GITHUB_ENV
-          # git push origin ${{ env.HEAD_BRANCH }}-stg
-          git push origin ${{ env.HEAD_BRANCH_STG }}
+          git push origin ${{ env.HEAD_BRANCH }}-stg
+          # git push origin ${{ env.HEAD_BRANCH_STG }} まだ参照できないので空
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           # HEAD_BRANCH_STG: ${{ github.head_ref }} feature/test-6になった
@@ -50,7 +53,7 @@ jobs:
       - name: create pr feature-stg to stg
         if: contains(github.base_ref, 'master')
         run: |
-          gh pr create -H "${{ env.HEAD_BRANCH_STG }}" -B "stg" -t "stg release ${{ env.HEAD_BRANCH }}" --fill --label name "staging-release"
+          gh pr create -H "${{ env.HEAD_BRANCH_STG }}" -B "stg" -t "stg release ${{ env.HEAD_BRANCH }}" --fill -l "staging-release"
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
