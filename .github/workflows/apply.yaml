@@ -42,7 +42,7 @@ jobs:
           # git checkout -b feature/fuga-stg
           # git checkout -b feature/${{ env.GITHUB_REF_NAME }}-stg
           # git push origin feature/${{ env.GITHUB_REF_NAME }}-stg
-          git checkout -b feature/${{ env.BRANCH }}
+          git checkout -b feature/$GITHUB_REF_NAME
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
