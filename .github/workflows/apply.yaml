@@ -27,28 +27,31 @@ jobs:
       security-events: write
       statuses: write
     steps:
+      - name: branch name
+        run: | 
+          echo "HEAD_BRANCH=${{ github.head_ref }}" >> $GITHUB_ENV
+
       - name: Checkout
         uses: actions/checkout@v3
         with:
           fetch-depth: 0
           ref: master
-        # run: echo "BRANCH=$(echo ${GITHUB_REF#refs/heads/})" >> $GITHUB_ENV
-        env:
-          BRANCH: "${GITHUB_REF#refs/heads/}"
 
       - name: Create new branch from master
         run: |
-          # ↑でcheckoutしてたら派生元branch指定いらない
-          # git checkout -b feature/${{ env.BRANCH }}-stg
-          git checkout -b feature/fuga-stg
-          git push origin feature/fuga-stg
+          git checkout -b ${{ env.HEAD_BRANCH }}-stg
+          echo "HEAD_BRANCH_STG=$(git rev-parse --abbrev-ref HEAD)" >> $GITHUB_ENV
+          git push origin ${{ env.HEAD_BRANCH }}-stg
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          # HEAD_BRANCH_STG: ${{ github.head_ref }} feature/test-6になった
 
       - name: create pr feature-stg to stg
         if: contains(github.base_ref, 'master')
         run: |
-          gh pr create -H "feature/fuga-stg" -B "stg" -t "元と同じタイトル" --fill
+          #gh pr create -H "${{ env.HEAD_BRANCH_STG }}" -B "stg" -t "stg release ${{ env.HEAD_BRANCH }}" --fill ${{ env.HEAD_BRANCH_STG }}がからになる
+          gh pr create -H "${{ env.HEAD_BRANCH_STG }}" -B "stg" -t "stg release ${{ env.HEAD_BRANCH }}" --fill
+        
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
@@ -61,5 +64,3 @@ jobs:
 # 4. [CI] feature/1のマージをトリガーとして、feature/1-stgブランチとstg向けPR3を作成
 # 5. [開発者] PR2のplanを確認して、問題なければfeature/2をマージ (apply)
 # 6. [CI] feature/2のマージをトリガーとして、feature/2-stgブランチとstg向けPR4を作成
-
-# 
