@@ -41,7 +41,8 @@ jobs:
         run: |
           git checkout -b ${{ env.HEAD_BRANCH }}-stg
           echo "HEAD_BRANCH_STG=$(git rev-parse --abbrev-ref HEAD)" >> $GITHUB_ENV
-          git push origin ${{ env.HEAD_BRANCH }}-stg
+          # git push origin ${{ env.HEAD_BRANCH }}-stg
+          git push origin ${{ env.HEAD_BRANCH_STG }}
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           # HEAD_BRANCH_STG: ${{ github.head_ref }} feature/test-6になった
@@ -49,11 +50,20 @@ jobs:
       - name: create pr feature-stg to stg
         if: contains(github.base_ref, 'master')
         run: |
-          #gh pr create -H "${{ env.HEAD_BRANCH_STG }}" -B "stg" -t "stg release ${{ env.HEAD_BRANCH }}" --fill ${{ env.HEAD_BRANCH_STG }}がからになる
-          gh pr create -H "${{ env.HEAD_BRANCH_STG }}" -B "stg" -t "stg release ${{ env.HEAD_BRANCH }}" --fill
-        
+          gh pr create -H "${{ env.HEAD_BRANCH_STG }}" -B "stg" -t "stg release ${{ env.HEAD_BRANCH }}" --fill --label name "staging-release"
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: git-pr-release stg to main
+        if: contains(github.base_ref, 'stg')
+        uses: bakunyo/git-pr-release-action@v1.4
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          GIT_PR_RELEASE_BRANCH_PRODUCTION: main
+          GIT_PR_RELEASE_BRANCH_STAGING: stg
+          GIT_PR_RELEASE_LABELS: prod-release
+          GIT_PR_RELEASE_TEMPLATE: .git-pr-release-template
+
 
 
 
