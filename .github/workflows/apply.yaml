@@ -40,9 +40,8 @@ jobs:
       - name: Create new branch from master
         run: |
           git checkout -b ${{ env.HEAD_BRANCH }}-stg
-          git rev-parse --abbrev-ref HEAD >> $GITHUB_ENV
+          echo "HEAD_BRANCH_STG=$(git rev-parse --abbrev-ref HEAD)" >> $GITHUB_ENV
           git push origin ${{ env.HEAD_BRANCH }}-stg
-          # echo "HEAD_BRANCH_STG=${{ github.head_ref }}" >> $GITHUB_ENV
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           # HEAD_BRANCH_STG: ${{ github.head_ref }} feature/test-6になった
