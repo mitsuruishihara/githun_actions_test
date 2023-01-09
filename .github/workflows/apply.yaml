@@ -30,9 +30,7 @@ jobs:
       - name: branch name
         run: | 
           echo "HEAD_BRANCH=${{ github.head_ref }}" >> $GITHUB_ENV
-      - name: fetch env
-        run: |
-          echo ${{ env.HEAD_BRANCH }}
+
       - name: Checkout
         uses: actions/checkout@v3
         with:
@@ -44,18 +42,15 @@ jobs:
 
       - name: Create new branch from master
         run: |
-          # ↑でcheckoutしてたら派生元branch指定いらない
-          # git checkout -b feature/fuga-stg
-          # git checkout -b feature/${{ env.GITHUB_REF_NAME }}-stg
-          # git push origin feature/${{ env.GITHUB_REF_NAME }}-stg
-          git checkout -b feature/$GITHUB_REF_NAME
+          git checkout -b feature/${{ env.HEAD_BRANCH }}-stg
+          git push origin feature/${{ env.HEAD_BRANCH }}-stg
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
       - name: create pr feature-stg to stg
         if: contains(github.base_ref, 'master')
         run: |
-          gh pr create -H "feature/fuga-stg" -B "stg" -t "元と同じタイトル" --fill
+          gh pr create -H "feature/${{ env.HEAD_BRANCH }}" -B "stg" -t "元と同じタイトル" --fill
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
