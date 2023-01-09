@@ -42,15 +42,15 @@ jobs:
 
       - name: Create new branch from master
         run: |
-          git checkout -b feature/${{ env.HEAD_BRANCH }}-stg
-          git push origin feature/${{ env.HEAD_BRANCH }}-stg
+          git checkout -b ${{ env.HEAD_BRANCH }}-stg
+          git push origin ${{ env.HEAD_BRANCH }}-stg
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
       - name: create pr feature-stg to stg
         if: contains(github.base_ref, 'master')
         run: |
-          gh pr create -H "feature/${{ env.HEAD_BRANCH }}" -B "stg" -t "元と同じタイトル" --fill
+          gh pr create -H "${{ env.HEAD_BRANCH }}" -B "stg" -t "元と同じタイトル" --fill
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
