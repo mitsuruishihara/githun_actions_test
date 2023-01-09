@@ -37,8 +37,6 @@ jobs:
           fetch-depth: 0
           ref: master
         # run: echo "BRANCH=$(echo ${GITHUB_REF#refs/heads/})" >> $GITHUB_ENV
-        env:
-          BRANCH: "${GITHUB_REF#refs/heads/}"
 
       - name: Create new branch from master
         run: |
@@ -46,11 +44,12 @@ jobs:
           git push origin ${{ env.HEAD_BRANCH }}-stg
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          HEAD_BRANCH_STG: ${{ github.head_ref }}
 
       - name: create pr feature-stg to stg
         if: contains(github.base_ref, 'master')
         run: |
-          gh pr create -H "${{ env.HEAD_BRANCH }}" -B "stg" -t "元と同じタイトル" --fill
+          gh pr create -H "${{ env.HEAD_BRANCH_STG }}" -B "stg" -t "元と同じタイトル" --fill
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
