@@ -1,0 +1,26 @@
+name: manual-release
+on: 
+  workflow_dispatch:
+    inputs:
+      environment:
+        description: 'AWS Environment'
+        required: true
+        type: choice
+        options:
+          - stag
+          - prod
+      plan_or_apply:
+        description: 'Terraform plan or apply'
+        required: true
+        type: choice
+        options:
+          - plan
+          - apply
+
+jobs:
+  say_hello:
+    runs-on: ubuntu-latest
+    steps:
+    - run: |
+        echo "Hello ${{ github.event.inputs.name }}!"
+        echo "- in ${{ github.event.inputs.home }}!"
